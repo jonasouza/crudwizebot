@@ -51,7 +51,7 @@ export const updateUser = async (req, res) => {
       });
 
     const user = data[0];
-    const { nome, email, fone, senha } = req.body;
+    const { nome, email, fone, senha, plano } = req.body;
 
     const updateQuery =
       "UPDATE usuarios SET `nome` = ?, `email` = ?, `fone` = ?, `senha` = ?, `plano` = ? WHERE `id` = ?";
