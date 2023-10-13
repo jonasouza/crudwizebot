@@ -18,7 +18,8 @@ export const addUser = (req, res) => {
     req.body.nome,
     req.body.email,
     req.body.senha,
-    req.body.fone
+    req.body.fone,
+    req.body.plano,
   ];
 
   db.query(q, [values], (err, data) => {
