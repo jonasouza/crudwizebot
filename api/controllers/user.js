@@ -1,4 +1,8 @@
 import { db } from "../db.js";
+import {
+  createUserValidationObjectSchema,
+  updateUserValidationObjectSchema,
+} from "../validation/index.js";
 
 export const getUsers = (_, res) => {
   const q = "SELECT * FROM usuarios";
@@ -11,16 +15,19 @@ export const getUsers = (_, res) => {
 };
 
 export const addUser = (req, res) => {
-  const q =
-    "INSERT INTO usuarios(`nome`, `email`, `senha`, `fone`, `plano`) VALUES(?)";
+  const { error } = createUserValidationObjectSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({
+      status: 0,
+      message: error?.details[0].message,
+    });
+  }
 
-  const values = [
-    req.body.nome,
-    req.body.email,
-    req.body.senha,
-    req.body.fone,
-    req.body.plano,
-  ];
+  const q =
+    "INSERT INTO usuarios(`apiToken`, `nome`, `email`, `senha`, `fone`, `plano`) VALUES(?)";
+  const { apiToken, nome, email, senha, fone, plano } = req.body;
+
+  const values = [apiToken, nome, email, senha, fone, plano];
 
   db.query(q, [values], (err, data) => {
     if (err)
@@ -39,6 +46,14 @@ export const addUser = (req, res) => {
 
 export const updateUser = async (req, res) => {
   const id = req.params.id;
+
+  const { error } = updateUserValidationObjectSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({
+      status: 0,
+      message: error?.details[0].message,
+    });
+  }
 
   const query = "SELECT * FROM usuarios WHERE `id` = ?";
 
